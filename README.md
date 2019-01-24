@@ -166,7 +166,7 @@ plink --bfile unk4_4 --hwe 0.01 --make-bed --out unk4_4h
 ```
 
 ##### To prepare your files for R just paste this in:
-``
+```
 plink --bfile unk4_1h --hardy --out hardy_unk4_1h 
 grep 'ALL' hardy_unk4_1h.hwe | sed 's/ALL/POP1/g' >hzt
 plink --bfile unk4_2h --hardy --out hardy_unk4_2h 
