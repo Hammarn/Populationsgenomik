@@ -217,7 +217,9 @@ So our first step will be merging with a reference that we prepared form SNP inf
 Copy the RefInd files (bim, bed and fam) from your local data folder to working folder:
 
 Extract your SNPs of interest from the RefInd (remember you filtered out a number of SNPs already)
+```
 plink --bfile RefInd1 --extract unk5.bim --make-bed --out RefInd1_ext 
+```
 
 Make a list of CG and AT SNPs in your data:
 ```
@@ -228,15 +230,21 @@ sed 's/\t/ /g' RefInd1_ext.bim | grep " T A" >>ATCGlist
 ```
 
 Exclude the CG and AT SNPs form both your reference ind and data
+```
 plink  --bfile RefInd1_ext --exclude ATCGlist --make-bed --out RefInd1_ext2 
 plink  --bfile unk5 --exclude ATCGlist --make-bed --out unk6
+```
 
 Merge with RefInd
+```
 plink --bfile RefInd1_ext2 --bmerge unk6.bed unk6.bim unk6.fam --make-bed --out MergeRef1  
+```
 
 An error is generated because of the strand mismatches. The generated file MergeRef1.missnp
 contains the info on the SNPs where there are mismatches - flip the strand of these SNPs in your data.
+```
 plink --bfile unk6 --flip MergeRef1-merge.missnp --make-bed --out  unk7  
+```
 
 Try merging again:
 ```
@@ -295,8 +303,8 @@ Now you have generated your input files for the next exercise which will deal wi
 
 =============================================================================
 
-PART 2: Population structure inference 
-Using ADMIXTURE/CLUMPP/DISTRUCT and principal component analysis with EIGENSOFT 
+## PART 2: Population structure inference 
+Using ADMIXTURE/PONG and principal component analysis with EIGENSOFT 
 
 In case you didn’t go through OPTIONAL 2, please copy these files into your folder:
 ```
@@ -307,18 +315,20 @@ cp ../Data/PopStrucIn1.fam .
 
 
 
-Admixture is a similar tool as structure but runs much quicker especially on large datasets.
+Admixture is a similar tool to STRUCTURE but runs much quicker, especially on large datasets.
 Admixture runs directly from .bed or .ped files and need no extra parameter file preparation. You do not specify burnin and repeats, ADMIXTURE exits when it converged on a solution (Delta< minimum value)
 
 
 A basic ADMIXTURE run looks like this:
+```
 admixture -s time PopStrucIn1.bed 2
+```
 
 This command execute the program with a seed set from system clock time, it gives the input file (remember the extension) and the K value at which to run ADMIXTURE (2 in the previous command).
 
-For ADMIXTURE you also need to run many iterations at each K value, thus a cluster computer and some scripting is useful.
+For ADMIXTURE you also need to run many iterations at each K value, thus a compute cluster and some scripting is useful.
 
-Make a script from the code below to run Admixture for K2-6 with 3 iterations at each K value:
+Make a script from the code below to run Admixture for K = 2-6 with 3 iterations at each K value:
 ```
 for i in {2..6};
 do                                                                                      
@@ -380,5 +390,5 @@ N
 
 ```
 
-This creates the pdf “Admixture_Plot1.pdf”. The bar plots have the individual K cluster asignment for the 3 iterations at K=2-6. The order of individuals is in file “PopStrucIn1.fam”
+This creates the pdf `Admixture_Plot1.pdf`. The bar plots have the individual K cluster asignment for the 3 iterations at K=2-6. The order of individuals is in file “PopStrucIn1.fam”
 
