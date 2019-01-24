@@ -331,13 +331,13 @@ For ADMIXTURE you also need to run many iterations at each K value, thus a compu
 Make a script from the code below to run Admixture for K = 2-6 with 3 iterations at each K value:
 ```
 for i in {2..6};
-do                                                                                      
-for j in {1..3};                                                                                      
-do
-admixture -s time PopStrucIn1.bed ${i} 
-mv PopStrucIn1.${i}.Q PopStrucIn1.${i}.Q.${j};
-mv PopStrucIn1.${i}.P PopStrucIn1.${i}.P.${j};
-done
+    do                                                                                      
+    for j in {1..3};                                                                                      
+        do
+        admixture -s time PopStrucIn1.bed ${i} 
+        mv PopStrucIn1.${i}.Q PopStrucIn1.${i}.Q.${j};
+        mv PopStrucIn1.${i}.P PopStrucIn1.${i}.P.${j};
+    done
 done
 ```
 
@@ -391,4 +391,181 @@ N
 ```
 
 This creates the pdf `Admixture_Plot1.pdf`. The bar plots have the individual K cluster asignment for the 3 iterations at K=2-6. The order of individuals is in file “PopStrucIn1.fam”
+
+## PONG 
+
+The method above is a way to  quickly check your data, but you have to look at each iteration separately. This makes it hard to get a good overview of the results. We instead combine the different iterations using a software called PONG. 
+
+A typical PONG command looks like this:
+```
+pong -m your_filemap.txt -i your_ind2pop.txt -n your_pop_order.txt
+```
+
+To be able to run PONG we thus need to generate three different files.
+
+The first being the filemap. This is the only input that is strictly required to run PONG. IT consists of three columns.
+From the PONG manual: 
+```
+Column 1. The runID, a unique label for the Q matrix (e.g. the string “run5_K7”). Note:
+A runID must begin with a letter (A-Z/a-z), followed by any number of hyphens (-),
+underscores (_), letters, or numbers. Other characters are not allowed in runIDs.
+Hashmarks (#) can be used in the filemap to indicate the start of a comment.
+Column 2. The K value for the Q matrix. Each value of K between Kmin and Kmax must
+be represented by at least one Q matrix in the filemap; if not, pong will abort.
+Column 3. The path to the Q matrix, relative to the location of the filemap. Thus, if the
+filemap is in the same directory as the Q matrix file, this is just the name of the Q
+matrix file. Note that the metadata provided in the filemap allow the user to apply
+pong to Q matrices in multiple directories in the user’s computer. The path cannot
+contain a hashmark (#) because it will be interpreted as a comment.
+```
+
+
+
+
+## Principal component Analysis with Eigensoft
+
+The last population structure method we will look at is Principal Components Analysis with Eigensoft.
+
+You run eigensoft on the .bed format from plink. You only need to modify your .fam file a little for it to work in Eigensoft. The .bed and .map files you use directly as-is. The .fam file you change the extension to .pedind and you substitute the last column (-9 at the moment indicating missing phenotype) with population numbers. When assigning pop numbers do not use 1, 2 or 9. They are reserved for cases, controls and missing data in Eigensoft.
+
+Paste this piece of code on your .fam file to change it to a .pedind file.
+
+```
+cut -d " " -f1-5 PopStrucIn1.fam >file1a
+cut -d " " -f1 PopStrucIn1.fam >file2a
+sed "s/Unknown1/51/g" <file2a | sed "s/Unknown3/53/g" | sed "s/Unknown5/55/g" | sed "s/Unknown11/61/g" | sed "s/Unknown11/61/g" | sed "s/CEU/81/g" | sed "s/YRI/82/g" | sed "s/Han/83/g" | sed "s/San/84/g" | sed "s/MbutiPygmies/85/g" >file3a
+paste file1a file3a >fileComb
+sed "s/\t/ /g" fileComb > PopStrucIn1.pedind
+rm file1aa; rm file1a; rm file2a; rm file3a; rm fileComb
+```
+
+Furthermore you need a parameter file to indicate your parameter options to EIGENSOFT.
+
+Copy the prepared parameter file from the scripts directory to your working folder
+PopStrucIn1.par
+
+Open the parameter file and look what is specified in it. At the start is the input/output files. Furthermore we ask for the info for 10 PCs to be output, qtmode is set to NO to indicate more than one pop, we prune the SNPs based on LD for an r2 value of 0.2. We dont remove any outlying points and we limit the sample size to 20. This is important for PCA where there are groups with very large sample sizes, since large sample sizes will distort the PC plot. It is best for PCA that sample sizes are as even as possible
+.
+Copy smartpca from the directory EIG6.0.1/bin to your working directory
+
+Run the smartpca package in Eigensoft by typing
+
+```
+module load eigensoft/5.0.1/
+
+smartpca -p PopStrucIn1.par
+```
+
+The outputfiles are .evec and .eval
+
+In the .evec file is the main output for the number of PCs that you specified in the .par file. The first row is the Eigenvalues for each of you PCs the rest of the rows list your Pop:Ind specification, the PCs and their loadings and your PopNumber at the end. in the .eval is all the eigenvalues that were extracted. To work out the percentage of variation each PC explain, you divide your particular PC eigenvalue by the sum over all the eigenvalues.
+
+We will plot the PCs in R now
+
+
+Prep for R:
+```
+sed 1d PopStrucIn1.evec | sed  "s/:/   /g " >   PopStrucIn1.evecm
+```
+
+
+Open R and paste the following code to plot your PCs
+
+```
+WD<-getwd()
+setwd(WD)
+library(calibrate)
+## Define these
+evec<- read.table ("PopStrucIn1.evecm")
+eval<- read.table ("PopStrucIn1.eval")
+namer <- "PopStrucIn1"
+nrpc<-10
+## Script start
+totalev <-sum(eval)
+aa <- array(NA,dim=c(nrpc,1))
+for (i in 1:nrpc) {
+aa[i,1]<-format(round(((eval[i,1]/totalev)*100),3), nsmall = 3)}
+pdf (file =paste(namer, "_PCA1.pdf", sep=""), width =10, height = 15, pointsize =12)
+par(mfrow=c(3,2), oma=c(0,0,4,0))
+plot (evec[,3], evec[,4], col = 0, pch = 0, xlab=paste("PC1: ", aa[1,1], "%", sep=""), ylab=paste("PC2: ", aa[2,1], "%", sep=""))
+text(evec[,3], evec[,4], evec[,1], cex = 1, col = as.numeric(evec[,1]))
+plot (evec[,5], evec[,6], col = 0, pch = 0, xlab=paste("PC3: ", aa[3,1], "%", sep=""), ylab=paste("PC4: ", aa[4,1], "%", sep=""))
+text(evec[,5], evec[,6], evec[,1], cex = 1, col = as.numeric(evec[,1]))
+plot (evec[,7], evec[,8], col = 0, pch = 0, xlab=paste("PC5: ", aa[5,1], "%", sep=""), ylab=paste("PC6: ", aa[6,1], "%", sep=""))
+text(evec[,7], evec[,8], evec[,1], cex = 1, col = as.numeric(evec[,1]))
+plot (evec[,9], evec[,10], col = 0, pch = 0, xlab=paste("PC7: ", aa[7,1], "%", sep=""), ylab=paste("PC8: ", aa[8,1], "%", sep=""))
+text(evec[,9], evec[,10], evec[,1], cex = 1, col = as.numeric(evec[,1]))
+plot (evec[,11], evec[,12], col = 0, pch = 0, xlab=paste("PC9: ", aa[9,1], "%", sep=""), ylab=paste("PC10: ", aa[10,1], "%", sep=""))
+text(evec[,11], evec[,12], evec[,1], cex = 1, col = as.numeric(evec[,1]))
+plot (evec[,11], evec[,12], col = 0, pch = 0, xlab = " ", ylab = " ", axes = FALSE)
+title(paste(namer, "PC plot"), outer=TRUE, cex.main = 3) 
+dev.off()
+q()
+N
+```
+
+See if you understand the code above. It basically plot PC1vsPC2 etc, and put labels on the plot.
+
+Look at the output PDF. Does the results of your population PCA correspond to the population structure results you got from the ADMIXTURE plots? How many of the PCs do you think contain useful information. What part of the variation is represented by each of the PCs. Can you see the percentage variation that each PC explains?
+
+We also are going to do a projected PC. We will set-up a run in Eigensoft so that the PCs are calculated based on the Ref pops only and the Unknown individuals are projected on the PCs based on the Ref pops.
+
+To do that we need a slightly modified .par file and an additional file that list the pops to use as ref pops. Copy these two files from scripts and open them to see how they differ from the .par file used above:
+PopStrucIn1_Proj.par
+RefGroups.groups
+
+Run Eigensoft by typing:
+smartpca -p PopStrucIn1_Proj.par
+
+Prepare the output files for R and run R script as explained above. Remember the output filenames changed thus adapt the scripts used above accordingly (both the bash script line and the first part of the R script enclosed by the “”)
+
+Look at the output PDF, what has changed? This should give you a further indication as to who your Unknown populations are.
+
+Lastly we will look at which SNPs contributes to which axes in the PC (SNP weightings of each principal component). This is one way to identify the most informative SNPs that defines the structure between certain populations. This is useful if you want to look at population structure but you only want to pick a few best SNPs to type. To generate such a list you just add the snpweightoutname to your par file. We will also not prune for LD so that we do not exclude possible informative SNPs
+ 
+Copy the modified .par file look how it looks and run Eigensoft
+PopStrucIn1_snpweight.par
+
+./smartpca -p PopStrucIn1_snpweight.par
+
+
+Look at the PopStrucIn1.snpweight_out file. The file contains a list of snps and the weights they have on each PC. You can easily select and sort the list to obtain the SNPs with max info for a given PC.
+
+Look at your previous generated PC plot PopStrucIn1_Proj_PCA1.pdf
+Axis one (PC1) explain ~8% of the variation in your whole Ref_pop dataset. It is the axis that defines the difference between African and non-African populations. To generate a sorted list of the SNPs that would be the best to type to look at the difference between African and non Africans paste the following command:
+
+sed 's/ \+ /\t/g' PopStrucIn1.snpweight_out | sed 's/^\t//g' | cut -f1,3 | sort -r -n -k 3,3  >topSNPsPc1
+```
+Look at the topSNPsPc1 file that is generated
+```
+
+
+If you are interested about the frequency of the top SNP in your data. Copy the two scripts below:
+
+```
+Extract_snp_from_bed_make_Barplot
+Extract_snp_from_bed_make_Barplot.R
+```
+
+Open the main script and paste the rs name of the SNP you are interested in in the place where rs00000000 is at the moment. Save the script and run by typing:
+
+```
+./Extract_snp_from_bed_make_Barplot
+```
+
+You can run the script multiple times for different top of the list  (positive) and bottom of the list (negative) and middle (0) SNPs (each time substitute the particular rs number in the script) and compare the output PDFs.
+(The script is not adapted to visualize SNP frequencies for SNPs that contain missing data. So if you get the message
+mv: cannot stat `rsxxxx_counts_frequencies.txt': No such file or directory
+it means there are missing data for this SNP. Just try another SNP until you get representatives of top bottom and middle SNPs. Then compare the plots to eachother)
+
+What can you see about the frequencies of top (positive) and bottom of the list (negative) SNPs. What can you say about the SNPs around 0?
+
+If you have time you can look at the second PC as well and visualize the frequencies as described above. To extract and sort info for second PC:
+```
+sed 's/ \+ /\t/g' PopStrucIn1.snpweight_out | sed 's/^\t//g' | cut -f1,4 | sort -r -n -k 3,3  >topSNPsPc2
+ 
+```
+This is the end of section 2. Hope you could make a good guess as to who your unidentified pops were!
+
+##################################################################################
 
