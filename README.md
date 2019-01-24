@@ -398,7 +398,7 @@ The method above is a way to  quickly check your data, but you have to look at e
 
 A typical PONG command looks like this:
 ```
-pong -m your_filemap.txt -i your_ind2pop.txt -n your_pop_order.txt
+pong -m your_filemap.txt -i your_ind2pop.txt -n your_pop_order.txt -g
 ```
 
 To be able to run PONG we thus need to generate three different files.
@@ -406,21 +406,67 @@ To be able to run PONG we thus need to generate three different files.
 The first being the filemap. This is the only input that is strictly required to run PONG. IT consists of three columns.
 From the PONG manual: 
 ```
-Column 1. The runID, a unique label for the Q matrix (e.g. the string “run5_K7”). Note:
-A runID must begin with a letter (A-Z/a-z), followed by any number of hyphens (-),
-underscores (_), letters, or numbers. Other characters are not allowed in runIDs.
-Hashmarks (#) can be used in the filemap to indicate the start of a comment.
+Column 1. The runID, a unique label for the Q matrix (e.g. the string “run5_K7”).
+```
+
+```
 Column 2. The K value for the Q matrix. Each value of K between Kmin and Kmax must
 be represented by at least one Q matrix in the filemap; if not, pong will abort.
-Column 3. The path to the Q matrix, relative to the location of the filemap. Thus, if the
-filemap is in the same directory as the Q matrix file, this is just the name of the Q
-matrix file. Note that the metadata provided in the filemap allow the user to apply
-pong to Q matrices in multiple directories in the user’s computer. The path cannot
-contain a hashmark (#) because it will be interpreted as a comment.
+```
+
+```
+Column 3. The path to the Q matrix, relative to the location of the filemap. 
+```
+In order to create what we need we can run the following loop:
+```
+for i in {2..6};
+do
+    for j in {1..3};
+    do
+    echo -e "k${i}_r${j}\t$i\tPopStrucIn1.${i}.Q.${j}" >> unkown_filemap.txt
+    done
+done
+```
+The next file we need to create is the ind2pop file. It is just a list of which population each individual belongs to.
+We have this information in the `.fam` file so we can just cut out the field we need:
+
+```
+cut -f 1 -d " " PopStrucIn1.fam > unkown_ind2pop.txt
+``` 
+
+
+The poporder file is a key between what your populations are called and what "Proper" name you want to show up in your final plot.
+For us it will look like this.
+```
+CEU	European
+CHB	Han Chinese
+Egyptian	Egyptian
+YRI	Yoruba
+```
+So just copy this into a file called `unkown_poporder.txt`
+
+Now we have all the file we need. Time to run PONG.
+PONG is available through the module system on Uppmax
+```
+module load pong 
+```
+
+Go ahead and run PONG. 
+
+```
+pong -m unkown_filemap.txt -i unkown_ind2pop.txt -n unkown_poporder.txt -g 
+
+```
+When PONG is done it will start hosting a webserver wich displays the results at port 4000 by default:  http://localhost:4000
+In a new tab (if you didn't put PONG in the background) type:
+
+```
+firefox http://localhost:4000
 ```
 
 
-
+#### What do you see? What information does this give you about your unkown populationss? 
+#### Can you figure out what they are?
 
 ## Principal component Analysis with Eigensoft
 
