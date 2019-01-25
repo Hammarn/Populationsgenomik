@@ -178,6 +178,7 @@ grep 'ALL' hardy_unk4_4h.hwe | sed 's/ALL/POP4/g' >>hzt
 ```
 
 Now we will plot the heterozygosities of the two populations in R
+
 Open R by typing
 ```
 R
@@ -455,7 +456,6 @@ Go ahead and run PONG.
 
 ```
 pong -m unkown_filemap.txt -i unkown_ind2pop.txt -n unkown_poporder.txt -g 
-
 ```
 When PONG is done it will start hosting a webserver wich displays the results at port 4000 by default:  http://localhost:4000
 In a new tab (if you didn't put PONG in the background) type:
@@ -466,7 +466,24 @@ firefox http://localhost:4000
 
 
 #### What do you see? What information does this give you about your unkown populationss? 
-#### Can you figure out what they are?
+#### Can you figure out which they are?
+
+Once you are finished with looking at the PONG output you can click and save some output to file and hen close program by hitting `ctrl - c` in the reminal tab running it. 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 ## Principal component Analysis with Eigensoft
 
