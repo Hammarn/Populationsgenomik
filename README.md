@@ -482,7 +482,7 @@ cut -f 1 -d " " PopStrucIn1.fam > unkown_ind2pop.txt
 
 
 The poporder file is a key between what your populations are called and what "Proper" name you want to show up in your final plot.
-For us it will look like this. * Note that the file nees to be tab delimited * 
+For us it will look like this. *Note that the file nees to be tab delimited* 
 ```
 CEU	European
 Han	Chinese
@@ -524,10 +524,10 @@ firefox http://localhost:4000
 ```
 
 
-#### What do you see? What information does this give you about your unkown populationss? 
-#### Can you figure out which they are?
+#### What do you see? What information does this give you about your unkown populations? 
+#### Can you figure out who they are?
 
-Once you are finished with looking at the PONG output you can click and save some output to file and hen close program by hitting `ctrl - c` in the reminal tab running it. 
+Once you are finished with looking at the PONG output you can click and save some output to file and hen close program by hitting `ctrl - c` in the terminal tab running it. 
 
 
 
@@ -573,14 +573,14 @@ Copy smartpca from the directory EIG6.0.1/bin to your working directory
 Run the smartpca package in Eigensoft by typing
 
 ```
-module load eigensoft/5.0.1/
+module load eigensoft
 
 smartpca -p PopStrucIn1.par
 ```
 
 The outputfiles are .evec and .eval
 
-In the .evec file is the main output for the number of PCs that you specified in the .par file. The first row is the Eigenvalues for each of you PCs the rest of the rows list your Pop:Ind specification, the PCs and their loadings and your PopNumber at the end. in the .eval is all the eigenvalues that were extracted. To work out the percentage of variation each PC explain, you divide your particular PC eigenvalue by the sum over all the eigenvalues.
+In the `.evec` file is the main output for the number of PCs that you specified in the .par file. The first row is the Eigenvalues for each of you PCs the rest of the rows list your Pop:Ind specification, the PCs and their loadings and your PopNumber at the end. in the `.eval` is all the eigenvalues that were extracted. To work out the percentage of variation each PC explain, you divide your particular PC eigenvalue by the sum over all the eigenvalues.
 
 We will plot the PCs in R now
 
@@ -633,12 +633,13 @@ Look at the output PDF. Does the results of your population PCA correspond to th
 We also are going to do a projected PC. We will set-up a run in Eigensoft so that the PCs are calculated based on the Ref pops only and the Unknown individuals are projected on the PCs based on the Ref pops.
 
 To do that we need a slightly modified .par file and an additional file that list the pops to use as ref pops. Copy these two files from scripts and open them to see how they differ from the .par file used above:
-PopStrucIn1_Proj.par
+`PopStrucIn1_Proj.par`
 RefGroups.groups
 
 Run Eigensoft by typing:
+```
 smartpca -p PopStrucIn1_Proj.par
-
+```
 Prepare the output files for R and run R script as explained above. Remember the output filenames changed thus adapt the scripts used above accordingly (both the bash script line and the first part of the R script enclosed by the “”)
 
 Look at the output PDF, what has changed? This should give you a further indication as to who your Unknown populations are.
@@ -647,19 +648,21 @@ Lastly we will look at which SNPs contributes to which axes in the PC (SNP weigh
  
 Copy the modified .par file look how it looks and run Eigensoft
 PopStrucIn1_snpweight.par
-
+```
 ./smartpca -p PopStrucIn1_snpweight.par
+```
 
+Look at the `PopStrucIn1.snpweight_out` file. The file contains a list of snps and the weights they have on each PC. You can easily select and sort the list to obtain the SNPs with max info for a given PC.
 
-Look at the PopStrucIn1.snpweight_out file. The file contains a list of snps and the weights they have on each PC. You can easily select and sort the list to obtain the SNPs with max info for a given PC.
-
-Look at your previous generated PC plot PopStrucIn1_Proj_PCA1.pdf
+Look at your previous generated PC plot `PopStrucIn1_Proj_PCA1.pdf`
 Axis one (PC1) explain ~8% of the variation in your whole Ref_pop dataset. It is the axis that defines the difference between African and non-African populations. To generate a sorted list of the SNPs that would be the best to type to look at the difference between African and non Africans paste the following command:
 
+
+
+```
 sed 's/ \+ /\t/g' PopStrucIn1.snpweight_out | sed 's/^\t//g' | cut -f1,3 | sort -r -n -k 3,3  >topSNPsPc1
 ```
 Look at the topSNPsPc1 file that is generated
-```
 
 
 If you are interested about the frequency of the top SNP in your data. Copy the two scripts below:
