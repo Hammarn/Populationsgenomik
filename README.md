@@ -2,11 +2,11 @@
 # Population structure analysis
 Before we start here are some basic Unix/Linux commands if you are not used to working in a Unix-style terminal:
 ### Moving about:
-````
+```
     cd – change directory
     pwd – display the name of your current directory
     ls – list names of files in a directory
-````
+```
 ### File/Directory manipulations:
 ```
     cp – copy a file
@@ -20,21 +20,66 @@ Display file content:
 	cat - concatenate file contents to the screen or to a file
 	less - open file for viewing
 ```	
-	    
-  
+
+## PART 1 Filtering and merging population genomic data using PLINK  	    
+
+FYI: Link to PLINK site:[https://www.cog-genomics.org/plink2](https://www.cog-genomics.org/plink2)
+
+PLINK is a software for fast and efficient filtering, merging, editing of large SNP datasets, and exports to different outputs directly usable in other programs. Stores huge datasets in compact binary format from which it reads-in data very quickly.
+ 
+
+Running the program:
+
+Working on Rackham type:
+```
+module load bioinfo-tools 
+module load plink/1.90b4.9 
+
+```
+The software is already pre-installed on Rackham, you just have to load it
+
+Try it:
+```
+plink
+```
+
+#### Basic command structure: 
+``` 
+plink --filetypeflag filename --commandflag commandspecification --outputfilecommand --out outputfilename
+```
+For example to do filtering of missing markers at 10% frequency cutoff (reading-in a bed format file called file1, doing the filtering, writing to a ped format file called file2):
+```
+plink --bfile file1 --geno 0.1 --recode --out file2
+```
+
+#### Input formats:
+File format summary:
+ped format: usual format (.ped and .fam)
+.ped contain marker and genotype info and .fam files contain sample info
+bed format: binary/compact ped format (.fam .bim and .bed)
+(.fam - sample info  .bim - marker info  and .bed - genotype info in binary format
+tped format: transposed ped format (.tfam and .tped files)
+tfam sample info, .tped marker and genotype info in transposed format
+lgen format: long format (see manual, not used that often)
+
 
 
 Setup
 Navigate to the directory you want to work in.
-
+```
 cd path (change directory)
 mkdir directory_name (create new directory)
+```
 
+```
 cd /proj/g2018001/nobackup/private #Uppmax project for this course
 mkdir PopGen18_YOURNAME
-
+```
 
 ## Exercise 1 - Getting exercise datasets. Reading in bed file and converting to other formats 
+
+
+
 
 Copy the datasets from the directory “Data” to your working folder by pasting in the following commands in the command line, while you are in your working folder:
 ```
@@ -61,7 +106,7 @@ Read in a  bed file dataset and convert to ped format by typing/pasting in:
 ```
 plink --bfile unk1 --recode --out unk1_ped 
 ```
-#### Look at the info that plink prints to the screen. How many SNPs in the data? How many individuals? How much missing data?
+#### Look at the info that plink prints to the screen. How many SNPs are there in the data? How many individuals? How much missing data?
 
 #### Look at first few lines of the newly generated .map (sample info) and .ped (marker and genotype info) files using the more command as demonstrated above
 
@@ -74,11 +119,16 @@ Do  you see the difference in the two commands above for reading from a bed (--b
 
 Look at first few lines of the  `.tfam` and `.tped` files by using the `less` command
 
-Can you see what symbol is used to encode missing data?
+#### Can you see what symbol is used to encode missing data?
 
 Note- try to always work with bed files, they are much smaller and takes less time to read in. 
+See this for yourself by inspecting the difference in file sizes:
 
-Plink can convert to other file formats as well, look in the manual for the different types of conversions
+```
+ls -lh * 
+```
+
+Plink can convert to other file formats as well, you can have a look in the manual for the different types of conversions
 
 ## Exercise 2 - Data filtering. Missingness, HWE and MAF
 Now we will start to clean our data before further analysis
@@ -87,14 +137,14 @@ Look at the missingness information of each individual and snp by typing:
 ```
 plink  --bfile unk1 --missing --out test1miss
 ```
-Look at the two generated files by using the more command
+Look at the two generated files by using the `less` command (q to quit)
 ```
-more test1miss.imiss
-more test1miss.lmiss
+less test1miss.imiss
+less test1miss.lmiss
 ```
 
 The `.imiss` contains the individual missingness and the `.lmiss` the marker missingness
-Do you understand the columns of the files? the last three columns are the number of missing, the total and the fraction of missing markers and individuals for the two files respectively
+Do you understand the columns of the files? The last three columns are the number of missing, the total and the fraction of missing markers and individuals for the two files respectively
 
 We will start our filtering process with filtering for missing data
 First we filter for marker missingness, we have 1000’s of markers but only 80 individuals, so we want to try to save filtering out unnecessary individuals
@@ -106,7 +156,7 @@ plink --bfile unk1 --geno 0.1 --make-bed --out unk2
 Look at the screen output, how many SNPs were excluded?
 
 Now we will filter for individual missingness.
-Paste in the command below to filter out individuals with more than 15% missing data
+Paste in the command below to filter out ind
 ```
 plink --bfile unk2 --mind 0.15 --make-bed --out unk3 
 ```
@@ -309,9 +359,9 @@ Using ADMIXTURE/PONG and principal component analysis with EIGENSOFT
 
 In case you didn’t go through OPTIONAL 2, please copy these files into your folder:
 ```
-cp ../Data/PopStrucIn1.bed .
-cp ../Data/PopStrucIn1.bim .
-cp ../Data/PopStrucIn1.fam .
+cp ../DATA/PopStrucIn1.bed .
+cp ../DATA/PopStrucIn1.bim .
+cp ../DATA/PopStrucIn1.fam .
 ```
 
 
@@ -408,14 +458,9 @@ The first being the filemap. This is the only input that is strictly required to
 From the PONG manual: 
 ```
 Column 1. The runID, a unique label for the Q matrix (e.g. the string “run5_K7”).
-```
 
-```
 Column 2. The K value for the Q matrix. Each value of K between Kmin and Kmax must
 be represented by at least one Q matrix in the filemap; if not, pong will abort.
-```
-
-```
 Column 3. The path to the Q matrix, relative to the location of the filemap. 
 ```
 In order to create what we need we can run the following loop:
@@ -437,12 +482,18 @@ cut -f 1 -d " " PopStrucIn1.fam > unkown_ind2pop.txt
 
 
 The poporder file is a key between what your populations are called and what "Proper" name you want to show up in your final plot.
-For us it will look like this.
+For us it will look like this. * Note that the file nees to be tab delimited * 
 ```
 CEU	European
-CHB	Han Chinese
-Egyptian	Egyptian
+Han	Chinese
+MbutiPygmies	Rainforest Hunter Gatherers
+San	San
+Unknown1	Unknown1
+Unknown11	Unknown11
+Unknown3	Unknown3
+Unknown5	Unknown5
 YRI	Yoruba
+
 ```
 So just copy this into a file called `unkown_poporder.txt`
 
@@ -458,6 +509,14 @@ Go ahead and run PONG.
 pong -m unkown_filemap.txt -i unkown_ind2pop.txt -n unkown_poporder.txt -g 
 ```
 When PONG is done it will start hosting a webserver wich displays the results at port 4000 by default:  http://localhost:4000
+To view files interactively you need to have a X11 connection. So when you connect to rackham do:
+
+
+```
+ssh -AY YOUR_USERNAME_HERE@rackham.uppmax.uu.se
+
+```
+ 
 In a new tab (if you didn't put PONG in the background) type:
 
 ```
