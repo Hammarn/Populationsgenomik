@@ -484,15 +484,15 @@ cut -f 1 -d " " PopStrucIn1.fam > unkown_ind2pop.txt
 The poporder file is a key between what your populations are called and what "Proper" name you want to show up in your final plot.
 For us it will look like this. *Note that the file nees to be tab delimited* 
 ```
+
 CEU	European
-Han	Chinese
-MbutiPygmies	Rainforest Hunter Gatherers
-San	San
+Han_China Chinese
+Mbuti_Pygmies	Rainforest Hunter Gatherers
 Unknown1	Unknown1
 Unknown11	Unknown11
+Unknown2	Unknown2
 Unknown3	Unknown3
-Unknown5	Unknown5
-YRI	Yoruba
+Yoruba_Nigeria Yoruba
 
 ```
 So just copy this into a file called `unkown_poporder.txt`
