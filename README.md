@@ -482,7 +482,7 @@ cut -f 1 -d " " PopStrucIn1.fam > unkown_ind2pop.txt
 
 
 The poporder file is a key between what your populations are called and what "Proper" name you want to show up in your final plot.
-For us it will look like this. *Note that the file nees to be tab delimited* 
+For us it will look like this. *Note that the file needs to be tab delimited* 
 ```
 
 CEU	European
