@@ -79,7 +79,11 @@ mkdir PopGen18_YOURNAME
 ## Exercise 1 - Getting exercise datasets. Reading in bed file and converting to other formats 
 
 
+#### The course meterial can be found at the following path:
 
+```
+/proj/g2019001/nobackup/POPULATIONSGENETIK
+```
 
 Copy the datasets from the directory “Data” to your working folder by pasting in the following commands in the command line, while you are in your working folder:
 ```
