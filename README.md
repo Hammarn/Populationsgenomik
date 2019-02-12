@@ -72,7 +72,7 @@ mkdir directory_name (create new directory)
 ```
 
 ```
-cd /proj/g2018001/nobackup/private #Uppmax project for this course
+cd /proj/g2019001/nobackup/ #Uppmax project for this course
 mkdir PopGen18_YOURNAME
 ```
 
