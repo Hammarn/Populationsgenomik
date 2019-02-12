@@ -562,7 +562,7 @@ cut -d " " -f1 PopStrucIn1.fam >file2a
 sed "s/Unknown1/51/g" <file2a | sed "s/Unknown3/53/g" | sed "s/Unknown5/55/g" | sed "s/Unknown11/61/g" | sed "s/Unknown11/61/g" | sed "s/CEU/81/g" | sed "s/YRI/82/g" | sed "s/Han/83/g" | sed "s/San/84/g" | sed "s/MbutiPygmies/85/g" >file3a
 paste file1a file3a >fileComb
 sed "s/\t/ /g" fileComb > PopStrucIn1.pedind
-rm file1aa; rm file1a; rm file2a; rm file3a; rm fileComb
+rm file1a; rm file2a; rm file3a; rm fileComb
 ```
 
 Furthermore you need a parameter file to indicate your parameter options to EIGENSOFT.
