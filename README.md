@@ -572,7 +572,6 @@ PopStrucIn1.par
 
 Open the parameter file and look what is specified in it. At the start is the input/output files. Furthermore we ask for the info for 10 PCs to be output, qtmode is set to NO to indicate more than one pop, we prune the SNPs based on LD for an r2 value of 0.2. We dont remove any outlying points and we limit the sample size to 20. This is important for PCA where there are groups with very large sample sizes, since large sample sizes will distort the PC plot. It is best for PCA that sample sizes are as even as possible
 .
-Copy smartpca from the directory EIG6.0.1/bin to your working directory
 
 Run the smartpca package in Eigensoft by typing
 
