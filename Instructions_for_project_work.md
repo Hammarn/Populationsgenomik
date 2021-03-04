@@ -79,6 +79,18 @@ For Malder you can have a look [here](https://github.com/Hammarn/Populationsgeno
 There might be other tools that might be more useful in your use case, I will get back to you with some other options instead of Malder.
 
 
+
+### Further reading
+Your data is from the following publications:
+
+[Schlebusch 2012](https://pubmed.ncbi.nlm.nih.gov/22997136/)
+
+[Gurdasani_2015](https://www.nature.com/articles/nature13997)
+ 
+[Patin 2017](https://science.sciencemag.org/content/356/6337/543)
+
+You might find it worh to read them, or at least look at their key findings and figures.
+
 Good luck!
 
 Rickard
