@@ -74,9 +74,10 @@ It will require some tweaking though and you will need a way to plot it. Contact
 
 #### Admixture dating
 
-For Malder you can have a look [here](https://github.com/Hammarn/Populationsgenomik/blob/master/1BG512.md#optional-2---malder) or at the [MALDER](https://github.com/joepickrell/malder) or [ALDER](https://github.com/joepickrell/malder/blob/master/MALDER/README.txt) manuals.
-
-There might be other tools that might be more useful in your use case, I will get back to you with some other options instead of Malder.
+I higlhy suggest that you use DATES for admixture dating:
+[https://github.com/priyamoorjani/DATES](https://github.com/priyamoorjani/DATES)
+It's avialable through the uppmax module systems as `DATES`.
+It follows the EIGENSOFT package suites format and syntax.
 
 
 
