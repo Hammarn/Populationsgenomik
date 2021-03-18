@@ -82,8 +82,6 @@ It follows the EIGENSOFT package suites format and syntax.
 
 
 ### Further reading
-Your data is from the following publications:
-
 [Schlebusch 2012](https://pubmed.ncbi.nlm.nih.gov/22997136/)
 
 [Gurdasani_2015](https://www.nature.com/articles/nature13997)
