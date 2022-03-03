@@ -3,7 +3,7 @@
 You have been given some reference and target populations. They can be found at:
 
 ```
-/proj/g2020001/nobackup/HUMAN_POPGEN_PROJECT/IN_DATA
+/proj/uppmax2022-2-1/private/HUMAN_POPGEN_PROJECT/IN_DATA
 ```
 
 You will also find some useful scripts in the `SCRIPTS` folder.
@@ -69,7 +69,7 @@ It's probably a good idea to run PCA on just your reference dataset as well as t
 
 #### Projected PCA
 In `SCRIPTS` there is a script called `prep_run_proj_pca.sh` that can be used to run a projected PCA. 
-It will require some tweaking though and you will need a way to plot it. Contact me when are ready to run it! 
+It will require some tweaking though and you will need a way to plot it. Contact us when are ready to run it! 
 
 
 #### Admixture dating
