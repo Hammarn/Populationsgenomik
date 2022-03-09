@@ -29,7 +29,7 @@ You will need to have the number of indivduals in your modern reference and in y
 prep_run_proj_pca.sh basename_of_your_tfam_files num_modern num_ancient
 ```
 
-E.g. if you have 100 modern indivudals and 2 ancient:
+E.g. if you have 100 modern populations and 2 ancient individuals:
 
 ```
 prep_run_proj_pca.sh my_tfam 100 2
