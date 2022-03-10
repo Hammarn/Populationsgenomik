@@ -4,13 +4,13 @@ First of all you will need merged plink files wich contains your ancient individ
 Secondly you need to create two file. One file with the list of all your reference pops and another with the ancient individuals. It's the information contained in second column of the `.fam` files that you want.
 
 ```
-cut -f 2 -d " " reference_file.fam > pca_ref.pops
+cut -f 1 -d " " reference_file.fam | sort -u >  pca_ref.pops
 ```
 
 do the same for the aDNA ones:
 
 ```
-cut -f 2 -d " " reference_file.fam > pca_adna.pops
+cut -f 2 -d " " aDNA_file.fam > pca_adna.pops
 ```
 
 Now you need to create `.tfam, .tped` files from your`.bed, .fam, .bim` files.
